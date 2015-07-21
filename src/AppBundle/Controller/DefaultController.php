@@ -16,7 +16,10 @@ class DefaultController extends Controller
         return $this->render('default/index.html.twig');
     }
 
-    public function editAction(Request $request, $id){
+    public function editAction($id){
         return $id + 1;
+    }
+    public function add($a, $b){
+        return $a + $b;
     }
 }
