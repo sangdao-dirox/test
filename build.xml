@@ -55,7 +55,7 @@
   </target>
 
   <target name="phploc" description="Measure project size using PHPLOC">
-    <exec executable="phploc">
+    <exec executable="${toolsdir}phploc">
     <arg value="--log-csv" />
     <arg value="${builddir}/logs/phploc.csv" />
     <arg path="${sourcedir}" />
@@ -63,7 +63,7 @@
   </target>
 
   <target name="pdepend" description="Calculate software metrics using PHP_Depend">
-    <exec executable="pdepend">
+    <exec executable="${toolsdir}pdepend">
       <arg value="--jdepend-xml=${builddir}/logs/jdepend.xml" />
       <arg value="--jdepend-chart=${builddir}/pdepend/dependencies.svg" />
       <arg value="--overview-pyramid=${builddir}/pdepend/overview-pyramid.svg" />
