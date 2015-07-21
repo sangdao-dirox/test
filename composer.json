@@ -29,7 +29,8 @@
         "pdepend/pdepend": "~2.0",
         "phploc/phploc": "~2.0",
         "phpunit/phpunit": "~4.3",
-        "theseer/phpdox": "~0.7"
+        "theseer/phpdox": "~0.7",
+        "phpdocumentor/phpdocumentor:": "2.*"
     },
     "scripts": {
         "post-root-package-install": [
