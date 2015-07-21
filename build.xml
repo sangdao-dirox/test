@@ -7,7 +7,7 @@
   <property name="bin" value="${workspace}/bin" />
 
   <target name="build"
-  depends="prepare,vendors,parameters,lint,phploc,pdepend,phpcpd,phpmd-ci,phpcs-ci,phpdoc,phpunit,phpcb"/>
+  depends="prepare,vendors,parameters,bootstrap,lint,phploc,pdepend,phpcpd,phpmd-ci,phpcs-ci,phpdoc,phpunit,phpcb"/>
 
   <target name="build-parallel" depends="prepare,lint,tools-parallel,phpunit,phpcb"/>
 
@@ -151,5 +151,13 @@
       <arg path="app/config/parameters.yml" />
     </exec>
   </target>
+
+  <target name="bootstrap" description="Copy bootstrap">
+    <exec executable="cp" failonerror="true">
+      <arg path="app/bootstrap.php.cache" />
+      <arg path="app/bootstrap.php" />
+    </exec>
+  </target>
+
 
 </project>
