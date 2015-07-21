@@ -15,4 +15,8 @@ class DefaultController extends Controller
     {
         return $this->render('default/index.html.twig');
     }
+
+    public function editAction(Request $request, $id){
+        return $id + 1;
+    }
 }
