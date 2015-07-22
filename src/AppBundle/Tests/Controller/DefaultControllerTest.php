@@ -17,6 +17,6 @@ class DefaultControllerTest extends WebTestCase
     }
 
     public function testEdit(){
-        $this->assertEquals(100, DefaultController::editAction(100));
+        $this->assertEquals(101, DefaultController::editAction(100));
     }
 }
