@@ -31,7 +31,8 @@
         "phpunit/phpunit": "~4.3",
         "theseer/phpdox": "~0.7",
          "phpdocumentor/phpdocumentor": "2.*",
-         "mayflower/php-codebrowser": "~1.1"    
+         "mayflower/php-codebrowser": "~1.1" ,
+         "codeclimate/php-test-reporter": "dev-master"
     },
     "scripts": {
         "post-root-package-install": [

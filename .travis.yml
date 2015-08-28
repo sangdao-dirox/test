@@ -38,6 +38,7 @@ before_script:
 
 script:
     - phpunit -c app
+    - bin/test-reporter
 
 after_failure: "cat /home/travis/build/gimler/symfony-rest-edition/app/logs/test.log"
 
