@@ -1,0 +1,53 @@
+language: php
+
+php:
+  - 5.4
+  - 5.5
+  - hhvm
+
+
+before_install:
+    - sudo apt-get update
+    - sudo apt-get install -y --force-yes apache2 libapache2-mod-fastcgi php5-cgi php5-mysql sqlite php5-sqlite php5-xsl
+    - sudo service apache2 restart
+    #install capifony
+    - echo -n $id_rsa_{00..30} >> ~/.ssh/id_rsa_base64
+    - base64 --decode --ignore-garbage ~/.ssh/id_rsa_base64 > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - echo -e "Host <deploy host>\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+    - gem install capistrano --no-ri --no-rdoc
+    - eval "$(ssh-agent)"
+    - ssh-add
+
+
+services:
+    - redis
+    - mysql
+    - elasticsearch
+
+before_script:
+    - cp app/config/parameters.yml.dist app/config/parameters.yml
+    - composer self-update
+    - composer install --dev --no-interaction --prefer-source
+    - app/console doctrine:database:create --env=test --no-interaction --quiet
+    - sudo chmod -R 777 app/cache app/logs
+    - app/console doctrine:schema:update --force --env=test --no-interaction --quiet
+    - app/console cache:warmup --env=test --quiet
+    - php app/console assets:install
+    - php app/console assetic:dump --env=test
+    - sudo chmod -R 777 app/cache app/logs
+
+script:
+    - ./bin/phpspec run -fpretty --verbose
+    - ./bin/behat  --no-snippets --no-paths --verbose
+    - phpunit -c app
+
+after_failure: "cat /home/travis/build/gimler/symfony-rest-edition/app/logs/test.log"
+
+
+matrix:
+    allow_failures:
+          - php: hhvm
+
+after_success:
+    - "[ \"$TRAVIS_BRANCH\" == \"master\" ] && bundle exec cap production deploy"
