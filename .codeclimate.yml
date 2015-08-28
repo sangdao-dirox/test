@@ -1,0 +1,15 @@
+# Save as .codeclimate.yml (note leading .) in project root directory
+languages:
+    Ruby: true
+    JavaScript: true
+    PHP: true
+    Python: true
+
+exclude_paths:
+    - src/*/*Bundle/Tests
+    - src/*/Bundle/*Bundle/Tests
+    - src/*Bundle/Tests
+    - vendor/**/*
+    - .git/**/*
+    - app/**/*
+    - web/**/*
