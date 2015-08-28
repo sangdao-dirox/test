@@ -18,6 +18,7 @@ before_install:
     - gem install capistrano --no-ri --no-rdoc
     #- eval "$(ssh-agent)"
     #- ssh-add
+    - composer install --dev --no-interaction --prefer-source
 
 
 services:
@@ -27,7 +28,7 @@ services:
 
 before_script:
     - composer self-update
-    - composer install --dev --no-interaction --prefer-source
+    - composer update
     - app/console doctrine:database:create --env=test --no-interaction --quiet
     - sudo chmod -R 777 app/cache app/logs
     - app/console doctrine:schema:update --force --env=test --no-interaction --quiet
