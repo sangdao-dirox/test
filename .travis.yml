@@ -11,13 +11,13 @@ before_install:
     - sudo apt-get install -y --force-yes apache2 libapache2-mod-fastcgi php5-cgi php5-mysql sqlite php5-sqlite php5-xsl
     - sudo service apache2 restart
     #install capifony
-    - echo -n $id_rsa_{00..30} >> ~/.ssh/id_rsa_base64
-    - base64 --decode --ignore-garbage ~/.ssh/id_rsa_base64 > ~/.ssh/id_rsa
-    - chmod 600 ~/.ssh/id_rsa
-    - echo -e "Host <deploy host>\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+    #- echo -n $id_rsa_{00..30} >> ~/.ssh/id_rsa_base64
+    #- base64 --decode --ignore-garbage ~/.ssh/id_rsa_base64 > ~/.ssh/id_rsa
+    #- chmod 600 ~/.ssh/id_rsa
+    #- echo -e "Host <deploy host>\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
     - gem install capistrano --no-ri --no-rdoc
-    - eval "$(ssh-agent)"
-    - ssh-add
+    #- eval "$(ssh-agent)"
+    #- ssh-add
 
 
 services:
