@@ -1,47 +1,46 @@
 language: php
-
 php:
-#  - 5.4
-  - 5.5
-#  - hhvm
-
-
+- 5.5
 before_install:
-    - sudo apt-get update
-    - sudo apt-get install -y --force-yes apache2 libapache2-mod-fastcgi php5-cgi php5-mysql sqlite php5-sqlite php5-xsl
-    - sudo service apache2 restart
-    #install capifony
-    #- echo -n $id_rsa_{00..30} >> ~/.ssh/id_rsa_base64
-    #- base64 --decode --ignore-garbage ~/.ssh/id_rsa_base64 > ~/.ssh/id_rsa
-    #- chmod 600 ~/.ssh/id_rsa
-    #- echo -e "Host <deploy host>\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
-    - gem install capistrano --no-ri --no-rdoc
-    #- eval "$(ssh-agent)"
-    #- ssh-add
-    - composer install --dev --no-interaction --prefer-source
-
-
+- sudo apt-get update
+- sudo apt-get install -y --force-yes apache2 libapache2-mod-fastcgi php5-cgi php5-mysql
+  sqlite php5-sqlite php5-xsl
+- sudo service apache2 restart
+- gem install capistrano --no-ri --no-rdoc
+- composer install --dev --no-interaction --prefer-source
 services:
-    - redis
-    - mysql
-    - elasticsearch
-
+- redis
+- mysql
+- elasticsearch
 before_script:
-    - composer self-update
-    - composer update
-    - app/console doctrine:database:create --env=test --no-interaction --quiet
-    - sudo chmod -R 777 app/cache app/logs
-    - app/console doctrine:schema:update --force --env=test --no-interaction --quiet
-    - app/console cache:warmup --env=test --quiet
-    - php app/console assets:install
-    - php app/console assetic:dump --env=test
-    - sudo chmod -R 777 app/cache app/logs
-
+- composer self-update
+- composer update
+- app/console doctrine:database:create --env=test --no-interaction --quiet
+- sudo chmod -R 777 app/cache app/logs
+- app/console doctrine:schema:update --force --env=test --no-interaction --quiet
+- app/console cache:warmup --env=test --quiet
+- php app/console assets:install
+- php app/console assetic:dump --env=test
+- sudo chmod -R 777 app/cache app/logs
 script:
-    - phpunit -c app  --coverage-clover build/logs/clover.xml
-    - bin/test-reporter
-
-after_failure: "cat /home/travis/build/gimler/symfony-rest-edition/app/logs/test.log"
-
+- phpunit -c app  --coverage-clover build/logs/clover.xml
+after_failure: cat /home/travis/build/gimler/symfony-rest-edition/app/logs/test.log
 after_success:
-    - "[ \"$TRAVIS_BRANCH\" == \"master\" ] && bundle exec cap production deploy"
+- ! '[ "$TRAVIS_BRANCH" == "master" ] && bundle exec cap production deploy'
+- bin/test-reporter
+- export SYMFONY_ENV=prod && composer install --no-dev -o
+- mkdir deploy_backage
+- mv * deploy_backage
+- tar -czf package.tgz deploy_backage
+- sshpass -e scp package.tgz $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
+- sshpass -e ssh $DEPLOY_USER@$DEPLOY_HOST $DEPLOY_PATH/deploy.sh
+
+env:
+  global:
+  - secure: iAhFUYM1LAN4Hgxs6H7uxvhFU5BKI+W77eoIocJ2i9r1XPctNbkb5NwXbnuaXBIWn8EkfHuMMwn1m4xnffEqD/H9gqTu6JMpm9TfIbi9WC0LZISm64CLEbizJodZYlysN7lc3ktY9NRH8WC+hlYUAu91KANVLdn6AVeU4jQ9cOEahA4Y7pQJsKQH5uBDZFeyvMRzGTnUSY70rib0Rw01lVokPWi7eFKhrFNVfrIlywXt1OpB6FXCw5K/2CUkvn2ExdLz9XEaTGU0+70Z93WNW4P20vY2T44RUGCVInOyMgEJ6RfkJMizXbb1Ssxwfboo6kHqwWz+eMaJbrSttVZ0FyBOCyIYFn+weoeMsAD/oG0BYY7pRvwN5+kT85MVLevicxFeac7YUnIY8MSWEothRFYF8hx0ieHS4jqvQp9HEs/Yj3OMo2jEM5OJLPvvbm4eFmN36YCp92YqBhjqne9sSHQ1P2UQuDsQPRX9Emw2rM7VDcZ5E3IL1C9/1wY23UyObrhSo7vDL/MLtiyPrYFQcS/X8yrWoV53Bueehds82C38Z3o9QMyjSbweVuQclI9P85LrVYfT38xpuVKOnbERdCMQtw3M36DusKcYCqVa77X4Q6lMtymaSjG/7S3oA45b3P37EXra74noPsYvWDNc7wYBY0uXwFqzPrlVgwi25HE=
+  - secure: gNZQ7Oe027P6uLyzt9cdt2dwVif8naV7fva08mgXrVQbvwcpLgDuQ7TmUMv3ME5lQ3rGa27/uXd1U4zmCOzMHK6cDAwPhb/zmoMgNdtoBDnp5151DD0HAfkTmzWITi3sqVLvVyYFIVN+dd2JyJuZfzUZrAgiNvcpGvUsvEnATDZn3iDxfQppO1FwWNtv855XMdUPH2q0f04vgUfAnSxlS77kjMIvR8X4jKYH8ddm2abP5dbTibzh1UUGbpDSj5lOEDpPw/fTPYml+3SLTyY6snldpuCnBAqyH35Aa1axZNvmlH1dl9aC+z6Hu1cO/WxkVdLvdx4B7MhK3W6Nv5EawXmxhwyWdGVpr8Bdbyvhmtldi8kVDiaguIhjrCqIfPjBch6rTbts1MViXwWxSoqscj0XVxy429ZUwVXu6W7h9FjFbLrBBl0nhM8TKtcyCnaMyo6N7jkRIBgPMRiwE6NUyZmrOBjnWaicLOOeT7H3EAqv+UNpBq2viepiubc8rbPqvLwxrEJeLJktHTckdIQ8XHWE0k8uLB6OWkqKUP1SokFwjI88xbqerXtSp3IO4FNi951riQSXHEX9Y8W1OBLIQ4G8OmgzasEMvdNBbrLF6akbAqxUCLjKIjgl023sfWkGaMAepvzAvzMQuHiIdViSBEexfenI9NlZtsKUZ0Acjf0=
+  - secure: r74secr2ImBN00B+XctxU0VUhhrGvKNFNeOrtXBrXMmzxe8qCVGvCRQ3OTXUjZe4FlTxMctK3pmswkWYI96OKfoVun80x0a67W557RfS7TGzV7X0JHk4D8808pS8Ye1jOy4IGF/oiIr9cnGiz+zp8AsA8OCUTLFbeO7Rz+T7ay6JmOyuaGJfIYokQEyNDICt10hYC1gKnUDck0iwDgwgKb/OXeXfbGOTt+5mMZdivj4rUYFqwsjltZ0ym1Nk2iaqUd7GoFgbraYznx71l04RPRAoakkvZjOh5Szf/KaEdIM+zDUQzodRGv3/6V8rDd7tf7plMHQidejMTp+S2F6HMUNuSL9I2H+UIvWjHyFc4Gecc9blzZ4ShKbExnLI2DkiXXr8bNNbF8pAGxrLeI7kQFVY+9Zv66/oI/OBf8QYbi7Sy1jgTx5TPm9SxWFKih837Y+wACuxH+2k38mulQlFCljRsfmzijz3SoSFkYF2Ujg3l6ZXMqnturnuTzF28ctLb5y2ARBfO2Ymp10UfY1XN1VYpQVIoDXDxREP5CIV+DJ7d1ywURZf8T6hElhZQfQbZs5zrVQd8FzurtSYvGjumD4KzRzxQKm45t31pFGX4Vor0tgBm14YfXiLoqWCtejiLlkRQatNjvxc71WVJXSc77OEaKat/8cFNXSX9R7N+zY=
+addons:
+    apt:
+        packages:
+            - sshpass
