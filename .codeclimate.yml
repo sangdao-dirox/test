@@ -6,9 +6,9 @@ languages:
     Python: true
 
 exclude_paths:
-    - src/*/*Bundle/Tests/*
-    - src/*/Bundle/*Bundle/Tests/*
-    - src/*Bundle/Tests/*
+    - src/*/*Bundle/Tests
+    - src/*/Bundle/*Bundle/Tests
+    - src/*Bundle/Tests
     - vendor/*
     - .git/*
     - app/*
