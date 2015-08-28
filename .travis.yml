@@ -38,7 +38,7 @@ before_script:
     - sudo chmod -R 777 app/cache app/logs
 
 script:
-    - phpunit -c app
+    - phpunit -c app  --coverage-clover build/logs/clover.xml
     - bin/test-reporter
 
 after_failure: "cat /home/travis/build/gimler/symfony-rest-edition/app/logs/test.log"
