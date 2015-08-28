@@ -10,6 +10,6 @@ exclude_paths:
     - src/*/Bundle/*Bundle/Tests
     - src/*Bundle/Tests
     - vendor/**/*
-    - .git/**/*
-    - app/**/*
-    - web/**/*
+    - .git/*
+    - app/*
+    - web/*
